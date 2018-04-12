@@ -7,8 +7,9 @@ import BootstrapVue from 'bootstrap-vue'
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
+// axios.defaults.baseURL = 'http://127.0.0.1:8082';
 axios.defaults.baseURL = 'http://139.199.189.64';
-axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8';
+axios.defaults.headers.common['Authorization'] = 'Basic eW9uZzpwYXNzdzByZA==';
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios

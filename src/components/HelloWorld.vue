@@ -4,7 +4,7 @@
             <h1 class="h2 mb-4">后台管理系统</h1>
             <b-form-input v-model="form.username" type="text" placeholder="Enter your username"></b-form-input>
             <b-form-input v-model="form.password" type="password" placeholder="Enter your password"></b-form-input>
-             <b-button type="submit" class="col-md-12 col-sm-12 col-xs-12" variant="primary">登录</b-button>
+            <b-button type="submit" class="col-md-12 col-sm-12 col-xs-12" variant="primary">登录</b-button>
         </b-form>
     </div>
 </template>
@@ -25,15 +25,22 @@ export default {
     methods: {
         onSubmit(evt) {
             evt.preventDefault();
-            axios.get('/demo/hello').then((data) => {  
-                console.log("test")
-                this.data = data.data
-            }  
-            ).catch((err) => {  
-                console.log("test")
-                console.log(err)
-            }  
-            )
+            let auth = "Basic eW9uZzpwYXNzdzByZA=="
+            let formdata = new FormData();
+            formdata.append('username',this.form.username);
+            formdata.append('password',this.form.password);
+            formdata.append('grant_type','password');
+            axios.post('/oauth/token',formdata,{
+                "Content-Type":"multipart/form-data"
+                }
+            ).then((response) => {
+                console.log("login success")
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.access_token;
+                // this.$router.push('/Foo')
+            }, (response) => {
+                console.log("login fail")
+                // this.$router.push('/user_info')
+            });
         }
     },
 }
