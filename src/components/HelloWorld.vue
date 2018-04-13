@@ -11,37 +11,34 @@
 
 <script>
 import axios from 'axios'
+import {login} from '../api/securityService'
 export default {
     name: 'HelloWorld',
     data () {
         return {
             form: {
-                username: '',
-                password: ''
+                username: 'aaa',
+                password: 'aaa'
             },
             data:null
         }
     },
     methods: {
         onSubmit(evt) {
-            evt.preventDefault();
-            let auth = "Basic eW9uZzpwYXNzdzByZA=="
-            let formdata = new FormData();
-            formdata.append('username',this.form.username);
-            formdata.append('password',this.form.password);
-            formdata.append('grant_type','password');
-            axios.post('/oauth/token',formdata,{
-                "Content-Type":"multipart/form-data"
-                }
-            ).then((response) => {
+            evt.preventDefault()
+            let formdata = new FormData()
+            formdata.append('username',this.form.username)
+            formdata.append('password',this.form.password)
+            formdata.append('grant_type','password')
+
+            login(formdata).then((response) => {
                 console.log("login success")
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.access_token;
-                // this.$router.push('/Foo')
+                this.$router.push('/Foo')
             }, (response) => {
                 console.log("login fail")
-                // this.$router.push('/user_info')
-            });
-        }
+            })
+            }
     },
 }
 </script>
