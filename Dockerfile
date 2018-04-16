@@ -7,6 +7,6 @@ WORKDIR /app
 RUN yarn
 
 ENV HOST 0.0.0.0
-ENV PORT 80
+ENV PORT 8080
 
 CMD [ "npm", "start" ]
