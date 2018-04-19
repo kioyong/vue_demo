@@ -2,14 +2,14 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
-import Bar from '@/components/Bar'
+import Registe from '@/components/Registe'
 
 Vue.use(Router)
 export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/login'
+      redirect: '/registe'
     },
     {
       path: '/login',
@@ -20,8 +20,8 @@ export default new Router({
       component: Home
     },
     {
-      path: '/Bar',
-      component: Bar
+      path: '/registe',
+      component: Registe
     }
   ]
 })
