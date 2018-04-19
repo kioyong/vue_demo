@@ -7,12 +7,8 @@ import BootstrapVue from 'bootstrap-vue'
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
-// axios.defaults.baseURL = 'http://127.0.0.1:8082';
-// axios.defaults.baseURL = 'http://139.199.189.64';
 
 Vue.config.productionTip = false
-Vue.prototype.$axios = axios
-Vue.prototype.$http = axios
 Vue.use(BootstrapVue)
 
 /* eslint-disable no-new */
