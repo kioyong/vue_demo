@@ -7,21 +7,9 @@ import Registe from '@/components/Registe'
 Vue.use(Router)
 export default new Router({
   routes: [
-    {
-      path: '/',
-      redirect: '/registe'
-    },
-    {
-      path: '/login',
-      component: Login
-    },
-    {
-      path: '/home',
-      component: Home
-    },
-    {
-      path: '/registe',
-      component: Registe
-    }
+    { path: '/', redirect: '/registe' },
+    { path: '/registe', component: Registe },
+    { path: '/login', component: Login },
+    { path: '/home', component: Home }
   ]
 })
