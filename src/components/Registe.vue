@@ -1,41 +1,56 @@
 <template>
-  <el-col :span="12" :offset="4">
-    <el-form ref="registeForm" :model="registeForm" :rules="rules" label-width="80px" class="registe-form">
-      <el-form-item label="Username:" prop="userName" class="registe-form-item">
-        <el-input v-model="registeForm.userName" placeholder="Enter Username" clearable @focus="isShowNameTips=true" @blur="isShowNameTips=false"></el-input>
-        <div v-if="isShowNameTips" class="focus-tips">
-          <span>Cannot be changed after setting.<br/>Up to 14 characters.</span>
+  <div>
+    <el-row>
+      <el-col :span="16" :offset="4" id="head">
+        <div class="title">Register</div>
+        <div class="login-link" id="login-link">
+          <span>我已注册，现在就</span>
+          <el-button class="login-btn" id="login_btn" size="mini" @click="login">登录</el-button>
         </div>
-      </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12" :offset="4" id="content">
+        <el-form ref="registeForm" :model="registeForm" :rules="rules" label-width="80px" class="registe-form" id="registe-form">
+          <el-form-item label="Username:" prop="userName" class="registe-form-item">
+            <el-input v-model="registeForm.userName" placeholder="Enter Username" clearable
+             @focus="isShowNameTips=true" @blur="isShowNameTips=false"></el-input>
+            <div v-if="isShowNameTips" class="focus-tips">
+              <span>Cannot be changed after setting.<br/>Up to 14 characters.</span>
+            </div>
+          </el-form-item>
+          <el-form-item label="Password:" prop="password" class="registe-form-item">
+            <el-input type="password" v-model="registeForm.password" placeholder="Enter Password" clearable
+             @focus="isShowPwdTips=true" @blur="isShowPwdTips=false"></el-input>
+            <ul v-if="isShowPwdTips" class="focus-tips-ul">
+              <i class="el-icon-arrow-left pwd-checklist-arrow"/>
+              <li>6~14 characters in length.</li>
+              <li>Supports digits, uppercase and lowercase letters and punctuation.</li>
+              <li>No spaces allowed.</li>
+            </ul>
+          </el-form-item>
+          <el-form-item label="Confirm Password:" prop="confirmPassword" class="registe-form-item">
+            <el-input type="password" v-model="registeForm.confirmPassword" placeholder="Re-enter Password" clearable
+             @focus="isShowPwdTips2=true" @blur="isShowPwdTips2=false"></el-input>
+            <ul v-if="isShowPwdTips2" class="focus-tips-ul">
+              <i class="el-icon-arrow-left pwd-checklist-arrow"/>
+              <li>6~14 characters in length.</li>
+              <li>Supports digits, uppercase and lowercase letters and punctuation.</li>
+              <li>No spaces allowed.</li>
+            </ul>
+          </el-form-item>
 
-      <el-form-item label="Password:" prop="password" class="registe-form-item">
-        <el-input type="password" v-model="registeForm.password" placeholder="Enter Password" clearable @focus="isShowPwdTips=true" @blur="isShowPwdTips=false"></el-input>
-        <ul v-if="isShowPwdTips" class="focus-tips-ul">
-          <span class="pwd-checklist-arrow"><em class="arrowa">◆</em><em class="arrowb">◆</em></span>
-          <li>6~14 characters in length.</li>
-          <li>Supports digits, uppercase and lowercase letters and punctuation.</li>
-          <li>No spaces allowed.</li>
-        </ul>
-      </el-form-item>
-      <el-form-item label="Confirm Password:" prop="confirmPassword" class="registe-form-item">
-        <el-input type="password" v-model="registeForm.confirmPassword" placeholder="Re-enter Password" clearable @focus="isShowPwdTips2=true" @blur="isShowPwdTips2=false"></el-input>
-        <ul v-if="isShowPwdTips2" class="focus-tips-ul">
-          <span class="pwd-checklist-arrow"><em class="arrowa">◆</em><em class="arrowb">◆</em></span>
-          <li>6~14 characters in length.</li>
-          <li>Supports digits, uppercase and lowercase letters and punctuation.</li>
-          <li>No spaces allowed.</li>
-        </ul>
-      </el-form-item>
+          <!-- brithday
+            remember
+          accept -->
 
-      <!-- brithday
-        remember
-      accept -->
-
-      <el-form-item class="registe-form-button">
-        <el-button type="primary" @click="submitForm('registeForm')">Sign up</el-button>
-      </el-form-item>
-    </el-form>
-  </el-col>
+          <el-form-item class="registe-form-button">
+            <el-button type="primary" @click="submitForm('registeForm')">Sign up</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -76,10 +91,13 @@
       };
     },
     methods: {
+      login() {
+        this.$router.push('/login');
+      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.$router.push('/login');
+            this.login();
           } else {
             this.$alert('Please check registe input', 'Error', {
               confirmButtonText: 'OK',
@@ -95,6 +113,28 @@
 </script>
 
 <style>
+#head {
+  height: 75px;
+  padding: 0 10px;
+  margin-bottom: 60px;
+  line-height: 75px;
+  border-bottom: 1px solid #dcdfe6;
+  box-shadow: 0px 8px 10px #efefef;
+}
+#head .title {
+  float: left;
+  font-size: 30px;
+  font-family: fantasy;
+}
+#head .login-link {
+  float: right;
+  font-size: 12px;
+  color: #666;
+}
+.login-link .login-btn {
+  font-weight: 700;
+}
+
 .registe-form-item {
   margin-right: 270px;
 }
@@ -137,21 +177,8 @@
 .pwd-checklist-arrow {
   position: absolute;
   left: -10px;
-}
-.pwd-checklist-arrow .arrowa,
-.pwd-checklist-arrow .arrowb {
-  position: absolute;
-  top: 0;
-  font-size: 20px;
-  font-style:  normal;
-}
-.pwd-checklist-arrow .arrowa {
-  left: 0;
   color: #ddd;
-}
-.pwd-checklist-arrow .arrowb {
-  color: #f9f9f9;
-  left: 1px;
+  font-size: 16px;
 }
 
 .registe-form-button {
