@@ -13,36 +13,34 @@
     <el-row>
       <el-col :span="12" :offset="4" id="content">
         <el-form ref="registeForm" :model="registeForm" :rules="rules" label-width="80px" class="registe-form" id="registe-form">
-          <el-form-item label="Username:" prop="userName" class="registe-form-item">
-            <el-input v-model="registeForm.userName" placeholder="Enter Username" clearable
+          <el-form-item label="Username:" prop="username" class="registe-form-item">
+            <el-input v-model="registeForm.username" placeholder="Enter username" clearable
              @focus="isShowNameTips=true" @blur="isShowNameTips=false"></el-input>
             <div v-if="isShowNameTips" class="focus-tips">
               <span>Cannot be changed after setting.<br/>5 to 10 characters in length.</span>
             </div>
           </el-form-item>
-
           <el-form-item label="Email:" prop="email" class="registe-form-item">
             <el-input v-model="registeForm.email" placeholder="Enter Email" clearable></el-input>
           </el-form-item>
-
           <el-form-item label="Password:" prop="password" class="registe-form-item">
             <el-input type="password" v-model="registeForm.password" placeholder="Enter Password" clearable
-             @focus="isShowPwdTips=true" @blur="isShowPwdTips=true"></el-input>
+             @focus="isShowPwdTips=true" @blur="isShowPwdTips=false"></el-input>
             <ul v-if="isShowPwdTips" class="focus-tips-ul">
-              <i class="el-icon-arrow-left pwd-checklist-arrow"/>
-              <li icon="el-icon-success">8~14 characters in length.</li>
-              <li>Supports digits, uppercase and lowercase letters and punctuation.</li>
-              <li>No spaces allowed.</li>
-            </ul>
-          </el-form-item>
-          <el-form-item label="Confirm Password:" prop="confirmPassword" class="registe-form-item">
-            <el-input type="password" v-model="registeForm.confirmPassword" placeholder="Re-enter Password" clearable
-             @focus="isShowPwdTips2=true" @blur="isShowPwdTips2=false"></el-input>
-            <ul v-if="isShowPwdTips2" class="focus-tips-ul">
               <i class="el-icon-arrow-left pwd-checklist-arrow"/>
               <li>8~14 characters in length.</li>
               <li>Supports digits, uppercase and lowercase letters and punctuation.</li>
               <li>No spaces allowed.</li>
+            </ul>
+          </el-form-item>
+          <el-form-item label="Confirm Password:" prop="confirmPassword" class="registe-form-item" required>
+            <el-input type="password" v-model="registeForm.confirmPassword" placeholder="Re-enter Password" clearable
+             @focus="isShowConPwdTips=true"></el-input>
+            <ul v-if="isShowConPwdTips" class="focus-tips-ul">
+              <i class="el-icon-arrow-left pwd-checklist-arrow"/>
+              <li :class="conPwdClass1">8~14 characters in length.</li>
+              <li :class="conPwdClass2">Supports digits, uppercase and lowercase letters and punctuation.</li>
+              <li :class="conPwdClass3">No spaces allowed.</li>
             </ul>
           </el-form-item>
           <el-form-item label="Brithday" class="registe-form-item">
@@ -52,7 +50,6 @@
           <el-form-item class="registe-form-item">
             <el-checkbox v-model="isRemember">Remember me next time</el-checkbox>
           </el-form-item>
-
           <el-form-item class="registe-form-button">
             <el-button type="primary" @click="submitForm('registeForm')">Sign up</el-button>
           </el-form-item>
@@ -65,23 +62,67 @@
 <script>
   export default {
     data() {
-      var validateConfirmPassword = (rule, value, callback) => {
-        if(value != this.registeForm.password) {
-          this.registeForm.confirmPassword = "";
+      var validateConPwd = (rule, value, callback) => {
+        if(!value || value == "") {
+          this.resetConPwdClass();
+          callback(new Error('confirmPassword is required'));
+        } else{
+          if(value.length < 8 || value.length > 14) {
+            this.conPwdClass1 = 'el-icon-close';
+          } else {
+            this.conPwdClass1 = 'el-icon-check';
+          }
+          if(/^[\w\?%&=\-_]+$/.test(value) == false) {
+            this.conPwdClass2 = 'el-icon-close';
+          } else {
+            this.conPwdClass2 = 'el-icon-check';
+          }
+          if(value.length != value.replace(/\s/g,"").length) {
+            this.conPwdClass3 = 'el-icon-close';
+          } else {
+            this.conPwdClass3 = 'el-icon-check';
+          }
+
+          this.isConPwdValid = true;
+          if(this.conPwdClass1 == 'el-icon-close' || this.conPwdClass2 == 'el-icon-close' || this.conPwdClass3 == 'el-icon-close') {
+            this.isConPwdValid = false;
+            callback(new Error('Please enter the correct confirm password.'));
+          } else if(value != this.registeForm.password) {
+            callback(new Error("The password and the confirmation password must be consistent."));
+          } else {
+            callback();
+          }
+        }
+      };
+      var validateConPwdBlur = (rule, value, callback) =>{
+        if(!value || value == "") {
+          this.isShowConPwdTips = false;
+          this.resetConPwdClass();
+          callback(new Error('confirmPassword is required'));
+        }else if(!this.isConPwdValid) {
+          this.isShowConPwdTips = true;
+          callback(new Error('Please enter the correct confirm password.'));
+        } else if(value && value != "" && value != this.registeForm.password) {
+          this.isShowConPwdTips = false;
           callback(new Error("The password and the confirmation password must be consistent."));
         } else {
+          this.isShowConPwdTips = false;
           callback();
         }
       };
       const date = new Date();
       var atLeast18 = date.setFullYear(date.getFullYear() - 18);
       return {
+        conPwdClass1: 'el-icon-info',
+        conPwdClass2: 'el-icon-info',
+        conPwdClass3: 'el-icon-info',
         isShowNameTips: false,
         isShowPwdTips: false,
-        isShowPwdTips2: false,
+        isConPwdValid: false,
+        isShowConPwdTips: false,
         isRemember: false,
         registeForm: {
-          userName: '',
+          username: '',
           email: '',
           password: '',
           confirmPassword: '',
@@ -94,7 +135,7 @@
           }
         },
         rules: {
-          userName: [
+          username: [
             { required: true, message: 'Please enter username', trigger: 'blur' },
             { min: 5, max: 10, message: '5 to 10 characters in length', trigger: 'blur' }
           ],
@@ -107,14 +148,18 @@
             { pattern: /^(\w){8,14}$/, message: '8~14 characters in length.Supports digits, uppercase and lowercase letters and punctuation.', trigger: 'blur' }
           ],
           confirmPassword: [
-            { required: true, message: 'Please re-enter password', trigger: 'blur' },
-            { pattern: /^(\w){8,14}$/, message: '8~14 characters in length.Supports digits, uppercase and lowercase letters and punctuation.', trigger: 'blur' },
-            { validator: validateConfirmPassword, trigger: 'blur' }
+            { validator: validateConPwd, trigger: 'change' },
+            { validator: validateConPwdBlur, trigger: 'blur' }
           ]
         }
       };
     },
     methods: {
+      resetConPwdClass() {
+        this.conPwdClass1 = 'el-icon-info';
+        this.conPwdClass2 = 'el-icon-info';
+        this.conPwdClass3 = 'el-icon-info';
+      },
       login() {
         this.$router.push('/login');
       },
@@ -183,7 +228,7 @@
 .focus-tips-ul {
   height: inherit;
   margin: 0 0 0 20px;
-  padding: 5px 0px 5px 24px;
+  padding: 5px 0px;
   border: 1px solid #ddd;
   box-shadow: 1px 1px 1px #efefef;
   background: #f9f9f9;
@@ -192,16 +237,23 @@
 .focus-tips span {
   padding-top: 6px;
 }
-.focus-tips-ul li {
-  line-height: 20px;
-  background: url(/assets/reg/reg_icons.png) no-repeat -86px -112px;
-  color: #666;
-}
 .pwd-checklist-arrow {
   position: absolute;
-  left: -10px;
+  left: -11px;
   color: #ddd;
   font-size: 16px;
+}
+.focus-tips-ul .el-icon-check:before,
+.focus-tips-ul .el-icon-close:before,
+.focus-tips-ul .el-icon-info:before {
+  margin: 0 5px 0 10px;
+  font-weight: 1000;
+}
+.focus-tips-ul .el-icon-check:before {
+  color: green !important;
+}
+.focus-tips-ul .el-icon-close:before {
+  color: red !important;
 }
 
 .registe-form-button {
