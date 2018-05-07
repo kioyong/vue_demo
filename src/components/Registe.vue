@@ -23,14 +23,14 @@
           <el-form-item label="Email:" prop="email" class="registe-form-item">
             <el-input v-model="registeForm.email" placeholder="Enter Email" clearable></el-input>
           </el-form-item>
-          <el-form-item label="Password:" prop="password" class="registe-form-item">
+          <el-form-item label="Password:" prop="password" class="registe-form-item" required>
             <el-input type="password" v-model="registeForm.password" placeholder="Enter Password" clearable
-             @focus="isShowPwdTips=true" @blur="isShowPwdTips=false"></el-input>
+             @focus="isShowPwdTips=true"></el-input>
             <ul v-if="isShowPwdTips" class="focus-tips-ul">
               <i class="el-icon-arrow-left pwd-checklist-arrow"/>
-              <li>8~14 characters in length.</li>
-              <li>Supports digits, uppercase and lowercase letters and punctuation.</li>
-              <li>No spaces allowed.</li>
+              <li :class="pwdClass1">8~14 characters in length.</li>
+              <li :class="pwdClass2">Supports digits, uppercase and lowercase letters and punctuation.</li>
+              <li :class="pwdClass3">No spaces allowed.</li>
             </ul>
           </el-form-item>
           <el-form-item label="Confirm Password:" prop="confirmPassword" class="registe-form-item" required>
@@ -62,61 +62,110 @@
 <script>
   export default {
     data() {
-      var validateConPwd = (rule, value, callback) => {
-        if(!value || value == "") {
-          this.resetConPwdClass();
-          callback(new Error('confirmPassword is required'));
-        } else{
-          if(value.length < 8 || value.length > 14) {
-            this.conPwdClass1 = 'el-icon-close';
-          } else {
-            this.conPwdClass1 = 'el-icon-check';
-          }
-          if(/^[\w\?%&=\-_]+$/.test(value) == false) {
-            this.conPwdClass2 = 'el-icon-close';
-          } else {
-            this.conPwdClass2 = 'el-icon-check';
-          }
-          if(value.length != value.replace(/\s/g,"").length) {
-            this.conPwdClass3 = 'el-icon-close';
-          } else {
-            this.conPwdClass3 = 'el-icon-check';
-          }
+      var validateAllPwdChange = (rule, value, callback) => {
+        if(rule.field == "password") {
+          if(!value || value == "") {
+            this.resetPwdClass();
+            callback(new Error('password is required'));
+          } else{
+            if(value.length < 8 || value.length > 14) {
+              this.pwdClass1 = 'el-icon-close';
+            } else {
+              this.pwdClass1 = 'el-icon-check';
+            }
+            if(/^[\w\?%&=\-_]+$/.test(value) == false) {
+              this.pwdClass2 = 'el-icon-close';
+            } else {
+              this.pwdClass2 = 'el-icon-check';
+            }
+            if(value.length != value.replace(/\s/g,"").length) {
+              this.pwdClass3 = 'el-icon-close';
+            } else {
+              this.pwdClass3 = 'el-icon-check';
+            }
 
-          this.isConPwdValid = true;
-          if(this.conPwdClass1 == 'el-icon-close' || this.conPwdClass2 == 'el-icon-close' || this.conPwdClass3 == 'el-icon-close') {
-            this.isConPwdValid = false;
-            callback(new Error('Please enter the correct confirm password.'));
-          } else if(value != this.registeForm.password) {
-            callback(new Error("The password and the confirmation password must be consistent."));
-          } else {
-            callback();
+            this.isPwdValid = true;
+            if(this.pwdClass1 == 'el-icon-close' || this.pwdClass2 == 'el-icon-close' || this.pwdClass3 == 'el-icon-close') {
+              this.isPwdValid = false;
+              callback(new Error('Please enter the correct password.'));
+            } else {
+              callback();
+            }
+          }
+        } else if(rule.field == "confirmPassword") {
+          if(!value || value == "") {
+            this.resetConPwdClass();
+            callback(new Error('confirmPassword is required'));
+          } else{
+            if(value.length < 8 || value.length > 14) {
+              this.conPwdClass1 = 'el-icon-close';
+            } else {
+              this.conPwdClass1 = 'el-icon-check';
+            }
+            if(/^[\w\?%&=\-_]+$/.test(value) == false) {
+              this.conPwdClass2 = 'el-icon-close';
+            } else {
+              this.conPwdClass2 = 'el-icon-check';
+            }
+            if(value.length != value.replace(/\s/g,"").length) {
+              this.conPwdClass3 = 'el-icon-close';
+            } else {
+              this.conPwdClass3 = 'el-icon-check';
+            }
+
+            this.isConPwdValid = true;
+            if(this.conPwdClass1 == 'el-icon-close' || this.conPwdClass2 == 'el-icon-close' || this.conPwdClass3 == 'el-icon-close') {
+              this.isConPwdValid = false;
+              callback(new Error('Please enter the correct confirm password.'));
+            } else if(value != this.registeForm.password) {
+              callback(new Error("The password and the confirm password must be consistent."));
+            } else {
+              callback();
+            }
           }
         }
       };
-      var validateConPwdBlur = (rule, value, callback) =>{
-        if(!value || value == "") {
-          this.isShowConPwdTips = false;
-          this.resetConPwdClass();
-          callback(new Error('confirmPassword is required'));
-        }else if(!this.isConPwdValid) {
-          this.isShowConPwdTips = true;
-          callback(new Error('Please enter the correct confirm password.'));
-        } else if(value && value != "" && value != this.registeForm.password) {
-          this.isShowConPwdTips = false;
-          callback(new Error("The password and the confirmation password must be consistent."));
-        } else {
-          this.isShowConPwdTips = false;
-          callback();
+      var validateAllPwdBlur = (rule, value, callback) =>{
+        if(rule.field == "password") {
+          if(!value || value == "") {
+            this.isShowPwdTips = false;
+            this.resetPwdClass();
+            callback(new Error('password is required'));
+          }else if(!this.isPwdValid) {
+            this.isShowPwdTips = true;
+            callback(new Error('Please enter the correct password.'));
+          } else {
+            this.isShowPwdTips = false;
+            callback();
+          }
+        } else if(rule.field == "confirmPassword") {
+          if(!value || value == "") {
+            this.isShowConPwdTips = false;
+            this.resetConPwdClass();
+            callback(new Error('confirmPassword is required'));
+          }else if(!this.isConPwdValid) {
+            this.isShowConPwdTips = true;
+            callback(new Error('Please enter the correct confirm password.'));
+          } else if(value && value != "" && value != this.registeForm.password) {
+            this.isShowConPwdTips = false;
+            callback(new Error("The password and the confirm password must be consistent."));
+          } else {
+            this.isShowConPwdTips = false;
+            callback();
+          }
         }
       };
       const date = new Date();
       var atLeast18 = date.setFullYear(date.getFullYear() - 18);
       return {
+        pwdClass1: 'el-icon-info',
+        pwdClass2: 'el-icon-info',
+        pwdClass3: 'el-icon-info',
         conPwdClass1: 'el-icon-info',
         conPwdClass2: 'el-icon-info',
         conPwdClass3: 'el-icon-info',
         isShowNameTips: false,
+        isPwdValid: false,
         isShowPwdTips: false,
         isConPwdValid: false,
         isShowConPwdTips: false,
@@ -144,17 +193,22 @@
             { pattern: /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/, message: 'Please enter the correct email address.', trigger: 'blur' }
           ],
           password: [
-            { required: true, message: 'Please enter password', trigger: 'blur' },
-            { pattern: /^(\w){8,14}$/, message: '8~14 characters in length.Supports digits, uppercase and lowercase letters and punctuation.', trigger: 'blur' }
+            { validator: validateAllPwdChange, trigger: 'change' },
+            { validator: validateAllPwdBlur, trigger: 'blur' }
           ],
           confirmPassword: [
-            { validator: validateConPwd, trigger: 'change' },
-            { validator: validateConPwdBlur, trigger: 'blur' }
+            { validator: validateAllPwdChange, trigger: 'change' },
+            { validator: validateAllPwdBlur, trigger: 'blur' }
           ]
         }
       };
     },
     methods: {
+      resetPwdClass() {
+        this.pwdClass1 = 'el-icon-info';
+        this.pwdClass2 = 'el-icon-info';
+        this.pwdClass3 = 'el-icon-info';
+      },
       resetConPwdClass() {
         this.conPwdClass1 = 'el-icon-info';
         this.conPwdClass2 = 'el-icon-info';
@@ -215,7 +269,7 @@
 }
 
 .focus-tips, .focus-tips-ul {
-  width: 270px;
+  width: 350px;
   height: 40px;
   position: absolute;
   top: 0;
