@@ -47,9 +47,6 @@
             <el-date-picker type="date" placeholder="Select date" v-model="registeForm.brithday" style="width: 100%;"
              :picker-options="brithdayOptions" :default-value="defaultBrithday"></el-date-picker>
           </el-form-item>
-          <el-form-item class="registe-form-item">
-            <el-checkbox v-model="isRemember">Remember me next time</el-checkbox>
-          </el-form-item>
           <el-form-item class="registe-form-button">
             <el-button type="primary" @click="submitForm('registeForm')">Sign up</el-button>
           </el-form-item>
@@ -169,7 +166,6 @@
         isShowPwdTips: false,
         isConPwdValid: false,
         isShowConPwdTips: false,
-        isRemember: false,
         registeForm: {
           username: '',
           email: '',
